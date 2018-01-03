@@ -159,14 +159,36 @@ $(function () {
    * 画像の保存
    */
   function save() {
-    preview_canvas.get(0).toBlob(function (blob) {
-      $('<a>', {
-        download: 'image.png',
-        href: URL.createObjectURL(blob),
-        target: '_blank'
-      }).get(0).click();
-      URL.revokeObjectURL(blob);
+
+    var preview_canvas_0 = preview_canvas.get(0);
+    if (preview_canvas_0.toBlob) {
+      preview_canvas_0.toBlob(downloadFromBlob);
+    } else if (preview_canvas_0.msToBlob) {
+      downloadFromBlob(preview_canvas_0.msToBlob());
+    } else {
+      alert('未対応ブラウザです。\r\nプレビューエリアの右クリック等で保存してください。');
+    }
+  }
+
+  /**
+   * ダウンロード
+   * 
+   * @param {*} blob 
+   */
+  function downloadFromBlob(blob) {
+    var a = $('<a>', {
+      type: 'hidden',
+      download: 'image.png',
+      target: '_blank',
+      href: URL.createObjectURL(blob)
     });
+
+    $('body').append(a);
+
+    a.get(0).click();
+    a.remove();
+
+    URL.revokeObjectURL(blob);
   }
 
   /**
