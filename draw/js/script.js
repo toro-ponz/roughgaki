@@ -20,15 +20,62 @@ $(function () {
     x1: 0,
     y1: 0
   };
-  //ペンの情報
+  // ペンの情報
   var pen = {
     mode: 'pen',
     color: 'rgba(0, 0, 0, 1)',
     width: 5,
     nib: 'round',
-  }
-  var undo_stack = [];
-  var redo_stack = [];
+  };
+  // 編集履歴
+  var history = {
+    undo_stack: [],
+    redo_stack: [],
+    draw: function () {
+      this.stack(this.undo_stack, {
+        id: current_layer.attr('id'),
+        data: current_layer.get(0).toDataURL(),
+      });
+      this.redo_stack = [];
+    },
+    stack: function (stack, item) {
+      stack.push(item);
+  
+      if (stack.length > 50) {
+        stack.shift();
+      }
+    },
+    undo: function() {
+      this.restore(this.undo_stack, this.redo_stack);
+    },
+    redo: function () {
+      this.restore(this.redo_stack, this.undo_stack);
+    },
+    restore: function (pop, push) {
+      if (pop.length < 1) {
+        return;
+      }
+  
+      var item = pop.pop();
+      var layer = $('#' + item.id);
+
+      this.stack(push, {
+        id: layer.attr("id"),
+        data: layer.get(0).toDataURL(),
+      });
+  
+      this.restoreLayer(layer, item.data);
+    },
+    restoreLayer: function (layer, data) {
+      var img = new Image();
+      img.src = data;
+      img.onload = function () {
+        clearCanvas(layer);
+        layer.get(0).getContext('2d').drawImage(img, 0, 0);
+        preview(layer.data('layer-id'), layer);
+      };
+    },
+  };
   // 描画中かどうか
   var drawing = false;
   // レイヤーの親要素
@@ -85,11 +132,10 @@ $(function () {
 
   // キャンバス上でのクリック
   canvas.on('mousedown', function (e) {
-    stack(undo_stack);
-    redo_stack = [];
     drawing = true;
     mouse.x1 = calculateMouseX(e);
     mouse.y1 = calculateMouseY(e);
+    history.draw();
     draw(e);
   });
 
@@ -162,10 +208,14 @@ $(function () {
   $('#save-button').on('click', save);
 
   // 元に戻す
-  $('#undo-button').on('click', undo);
+  $('#undo-button').on('click', function () {
+    history.undo();
+  });
 
   // やり直し
-  $('#redo-button').on('click', redo);
+  $('#redo-button').on('click', function () {
+    history.redo();
+  });
 
   /**
    * 画像の保存
@@ -203,81 +253,11 @@ $(function () {
   }
 
   /**
-   * スタックに積む
-   * 
-   * @param {*} stack 
-   * @param {*} item 
-   */
-  function stack(stack, item = null) {
-    if (item == null) {
-      item = {
-        id: current_layer.attr("id"),
-        data: current_layer.get(0).toDataURL(),
-      };
-    }
-
-    stack.push(item);
-
-    if (stack.length > 50) {
-      stack.shift();
-    }
-  }
-
-  /**
-   * 元に戻す
-   */
-  function undo() {
-    if (undo_stack.length < 1) {
-      return;
-    }
-
-    var undo = undo_stack.pop();
-    var undo_layer = $('#' + undo.id);
-    var item = {
-      id: undo_layer.attr("id"),
-      data: undo_layer.get(0).toDataURL(),
-    };
-    stack(redo_stack, item);
-
-    // キャンバスの復元
-    restoreCanvas(undo_layer, undo.data)
-  }
-
-  /**
-   * やり直し
-   */
-  function redo() {
-    if (redo_stack.length < 1) {
-      return;
-    }
-
-    var redo = redo_stack.pop();
-    var redo_layer = $('#' + redo.id);
-    var item = {
-      id: redo_layer.attr("id"),
-      data: redo_layer.get(0).toDataURL(),
-    };
-    stack(undo_stack, item);
-
-    // キャンバスの復元
-    restoreCanvas(redo_layer, redo.data)
-  }
-
-  /**
    * キャンバスの復元
    * 
    * @param {*} canvas 
    * @param {*} data 
    */
-  function restoreCanvas(canvas, data) {
-    var img = new Image();
-    img.src = data;
-    img.onload = function () {
-      clearCanvas(canvas);
-      canvas.get(0).getContext('2d').drawImage(img, 0, 0);
-      preview(canvas.data('layer-id'), canvas);
-    }
-  }
 
   /**
    * キャンバスを一段階縮小する
