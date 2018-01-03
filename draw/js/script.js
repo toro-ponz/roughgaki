@@ -51,6 +51,18 @@ $(function () {
         clearCanvas(current_layer);
         preview(current_layer.data('layer-id'));
         break;
+      // X
+      case 88:
+        if (e.ctrlKey) {
+          redo();
+        }
+        break;
+      // Z
+      case 90:
+        if (e.ctrlKey) {
+          undo();
+        }
+        break;
       // ,
       case 188:
         minusScale();
