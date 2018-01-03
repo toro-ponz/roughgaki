@@ -42,6 +42,17 @@ img {
   height: auto;
 }
 
+h1 {
+  color: white;
+  font-size: 3rem;
+  border-bottom: 4px solid #67c5ff;
+  padding: 10px 5px 5px 10px;
+}
+
+h1 small {
+  font-size: 1.4rem;
+}
+
 h5 {
   color: white;
   font-size: 2rem;
@@ -355,4 +366,15 @@ button:focus {
 
 #save-button:hover {
   background: darkgray;
+}
+
+.copyright {
+  font-size: 1.5rem;
+  color: white;
+  text-align: center;
+}
+
+.copyright a {
+  font-size: 1.5rem;
+  color: white;
 }

@@ -159,7 +159,6 @@ $(function () {
    * 画像の保存
    */
   function save() {
-
     var preview_canvas_0 = preview_canvas.get(0);
     if (preview_canvas_0.toBlob) {
       preview_canvas_0.toBlob(downloadFromBlob);
