@@ -15,10 +15,18 @@ $(function () {
   var layer_context = null;
   // マウスの座標情報
   var mouse = {
-    x: 0,
-    y: 0,
-    x1: 0,
-    y1: 0
+    begin_x: 0,
+    begin_y: 0,
+    end_x: 0,
+    end_y: 0,
+    reset: function (e) {
+      this.begin_x = e.offsetX;
+      this.begin_y = e.offsetY;
+    },
+    draw: function (e) {
+      this.end_x = e.offsetX;
+      this.end_y = e.offsetY;
+    },
   };
   // ペンの情報
   var pen = {
@@ -114,6 +122,11 @@ $(function () {
       };
     },
   };
+  // キャンバスの余白
+  var canvas_padding = {
+    x: parseInt($('#layer-canvases').css('padding-left'), 10),
+    y: parseInt($('#layer-canvases').css('padding-top'), 10)
+  }
   // 描画中かどうか
   var drawing = false;
   // レイヤーの親要素
@@ -171,8 +184,7 @@ $(function () {
   // キャンバス上でのクリック
   canvas.on('mousedown', function (e) {
     drawing = true;
-    mouse.x1 = calculateMouseX(e);
-    mouse.y1 = calculateMouseY(e);
+    mouse.reset(e);
     history.draw();
     draw(e);
   });
@@ -386,40 +398,16 @@ $(function () {
    * @param {*} e 
    */
   function draw(e) {
-    mouse.x = calculateMouseX(e);
-    mouse.y = calculateMouseY(e);
+    mouse.draw(e);
     
     layer_context.beginPath();
-    layer_context.moveTo(mouse.x1, mouse.y1);
-    layer_context.lineTo(mouse.x, mouse.y);
+    layer_context.moveTo(mouse.begin_x - canvas_padding.x, mouse.begin_y - canvas_padding.y);
+    layer_context.lineTo(mouse.end_x - canvas_padding.x, mouse.end_y - canvas_padding.y);
     layer_context.stroke();
     layer_context.closePath();
 
-    mouse.x1 = mouse.x;
-    mouse.y1 = mouse.y;
-  }
-
-  /**
-   * mouse.Xの計算
-   * 
-   * @param {event} e 
-   */
-  function calculateMouseX(e) {
-    var padding = parseInt(layer_canvases.css('padding-left'), 10);
-
-    return e.offsetX - padding;
-  }
-
-  /**
-   * mouse.Yの計算
-   * 
-   * @param {event} e 
-   */
-  function calculateMouseY(e) {
-    var padding = parseInt(layer_canvases.css('padding-top'), 10);
-
-    return e.offsetY - padding;
-  }
+    mouse.reset(e);
+  }  
 
   /**
    * 初期化
