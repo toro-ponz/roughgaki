@@ -291,13 +291,6 @@ $(function () {
   }
 
   /**
-   * キャンバスの復元
-   * 
-   * @param {*} canvas 
-   * @param {*} data 
-   */
-
-  /**
    * キャンバスを一段階縮小する
    */
   function minusScale() {
