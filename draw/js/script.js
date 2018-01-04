@@ -26,6 +26,44 @@ $(function () {
     color: 'rgba(0, 0, 0, 1)',
     width: 5,
     nib: 'round',
+    change: function () {
+      this.changeMode();
+      this.changeColor();
+      this.changeWidth();
+      this.changeNib();
+    },
+    changeMode: function (mode = null) {
+      if (mode) {
+        this.mode = mode;
+      }
+  
+      switch (this.mode) {
+        case 'eraser':
+          layer_context.globalCompositeOperation = 'destination-out';
+          break;
+        default:
+          layer_context.globalCompositeOperation = 'source-over';
+          break;
+      }
+    },
+    changeColor: function (color = null) {
+      if (color) {
+        this.color = color;
+      }
+      layer_context.strokeStyle = this.color;
+    },
+    changeWidth: function (width = null) {
+      if (width) {
+        this.width = width;
+      }
+      layer_context.lineWidth = this.width;
+    },
+    changeNib: function (nib = null) {
+      if (nib) {
+        this.nib = nib;
+      }
+      layer_context.lineCap = this.nib;
+    },
   };
   // 編集履歴
   var history = {
@@ -161,10 +199,10 @@ $(function () {
     clickoutFiresChange: true,
     preferredFormat: "rgb",
     change: function(color) {
-      changePenColor(color);
+      pen.changeColor(color);
     },
     move: function(color){
-      changePenColor(color);
+      pen.changeColor(color);
     },
   });
 
@@ -172,21 +210,21 @@ $(function () {
   $('.pen-mode-button').on('click', function () {
     $('.pen-mode-button').removeClass('active-pen-mode');
     $(this).addClass('active-pen-mode');
-    changePenMode($(this).val());
+    pen.changeMode($(this).val());
   });
 
   // ペン先ボタンのクリック
   $('.pen-nib-button').on('click', function () {
     $('.pen-nib-button').removeClass('active-pen-nib');
     $(this).addClass('active-pen-nib');
-    changePenNib($(this).val());
+    pen.changeNib($(this).val());
   });
 
   // ペンサイズボタンのクリック
   $('.pen-size-button').on('click', function () {
     $('.pen-size-button').removeClass('active-pen-size');
     $(this).addClass('active-pen-size');
-    changePenWidth($(this).val());
+    pen.changeWidth($(this).val());
   });
 
   // レイヤー追加ボタンのクリック
@@ -396,7 +434,7 @@ $(function () {
   function initialize() {
     addLayer();
     changeCanvasSize();
-    changePen();
+    pen.change();
     scrollCenter($('#canvases-scrollable'));
   }
 
@@ -445,73 +483,7 @@ $(function () {
     $('.layer-button').removeClass('active-layer');
     $('#layer-button-' + id).addClass('active-layer');
 
-    changePen();
-  }
-
-  /**
-   * ペン情報の再読み込み
-   */
-  function changePen() {
-    changePenMode();
-    changePenColor();
-    changePenWidth();
-    changePenNib();
-  }
-
-  /**
-   * ペンモードの変更
-   * 
-   * @param {*} mode 
-   */
-  function changePenMode(mode = null) {
-    if (mode) {
-      pen.mode = mode;
-    }
-
-    switch (pen.mode) {
-      case 'eraser':
-        layer_context.globalCompositeOperation = 'destination-out';
-        break;
-      default:
-        layer_context.globalCompositeOperation = 'source-over';
-        break;
-    }
-  }
-
-  /**
-   * ペンの色の変更
-   * 
-   * @param {*} color 
-   */
-  function changePenColor(color = null) {
-    if (color) {
-      pen.color = color;
-    }
-    layer_context.strokeStyle = pen.color;
-  }
-
-  /**
-   * ペンの太さの変更
-   * 
-   * @param {*} width 
-   */
-  function changePenWidth(width = null) {
-    if (width) {
-      pen.width = width;
-    }
-    layer_context.lineWidth = pen.width;
-  }
-
-  /**
-   * ペン先の変更
-   * 
-   * @param {*} nib 
-   */
-  function changePenNib(nib = null) {
-    if (nib) {
-      pen.nib = nib;
-    }
-    layer_context.lineCap = pen.nib;
+    pen.change();
   }
 
   /**
