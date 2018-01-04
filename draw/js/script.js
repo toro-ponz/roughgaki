@@ -152,13 +152,13 @@ $(function () {
       // X
       case 88:
         if (e.ctrlKey) {
-          redo();
+          history.redo();
         }
         break;
       // Z
       case 90:
         if (e.ctrlKey) {
-          undo();
+          history.undo();
         }
         break;
       // ,
