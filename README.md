@@ -19,4 +19,4 @@
 [Twitter](https://twitter.com/toro_ponz)
 
 ## ライセンス
-[MIT](License.txt)
+[MIT](License)
