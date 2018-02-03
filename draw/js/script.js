@@ -1,14 +1,10 @@
 $(function () {
   'use strict';
 
-  // マウスイベントを取得するキャンバス
-  var canvas = $('#canvas');
   // プレビュー領域のキャンバス
   var preview_canvas = $('#preview-canvas');
   // プレビュー領域のキャンバスコンテキスト
   var preview_canvas_context = preview_canvas.get(0).getContext('2d');
-  // マウスイベントを取得するキャンバスのRect情報
-  var rect = canvas.get(0).getBoundingClientRect();
   // 現在のレイヤー
   var current_layer = null;
   // レイヤーの操作用コンテキスト
@@ -122,21 +118,71 @@ $(function () {
       };
     },
   };
-  // キャンバスの余白
-  var canvas_padding = {
-    x: parseInt($('#layer-canvases').css('padding-left'), 10),
-    y: parseInt($('#layer-canvases').css('padding-top'), 10)
-  }
-  // 描画中かどうか
-  var drawing = false;
+  // キャンバス
+  var canvases = {
+    object: $('#canvases'),
+    scale: 1.0,
+    canvas: {
+      object: $('#canvas'),
+      drawing: false,
+      size: {
+        width: 1000,
+        height: 800
+      },
+      padding: {
+        x: parseInt($('#layer-canvases').css('padding-left'), 10),
+        y: parseInt($('#layer-canvases').css('padding-top'), 10)
+      },
+      layers: {
+        object: $('.layer'),
+        changeSize: function (width, height) {
+          this.object.each(function () {
+            $(this).get(0).width = width;
+            $(this).get(0).height = height;
+          });
+        }
+      },
+      previewCanvas: {
+        object: $('#preview-canvas'),
+        changeSize: function (width, height) {
+          this.object.get(0).width = width;
+          this.object.get(0).height = height;
+        }
+      },
+      draw: function () {
+        this.drawing = true;
+      },
+      drawed: function () {
+        this.drawing = false;
+      },
+      changeSize: function (width = this.size.width, height = this.size.height) {
+        this.layers.changeSize(width, height);
+        this.previewCanvas.changeSize(width, height);
+
+        // 左右に500pxのpadding
+        this.object.get(0).width = width + 1000;
+        // 上下に300pxのpadding
+        this.object.get(0).height = height + 600;
+      },
+    },
+    scaleUp: function () {
+      this.scaling(this.scale + 0.2);
+    },
+    scaleDown: function () {
+      this.scaling(this.scale - 0.2);
+    },
+    scaling: function (scale) {
+      this.scale = scale;
+      this.object.css('transform', 'scale(' + scale + ', ' + scale + ')');
+    }
+  };
+
   // レイヤーの親要素
   var layer_canvases = $('#layer-canvases');
   // レイヤーの総数(削除含む)
   var layer_increments = 0;
   // レイヤーの数
   var layer_count = 0;
-  // キャンバスの拡大率
-  var canvas_scale = 1.0;
 
   // 初期化
   initialize();
@@ -163,18 +209,18 @@ $(function () {
         break;
       // ,
       case 188:
-        minusScale();
+        canvases.scaleDown();
         break;
       // .
       case 190:
-        plusScale();
+        canvases.scaleUp();
         break;
     }
   });
 
   // キャンバス上での描画
-  canvas.on('mousemove mouseleave', function (e) {
-    if(!drawing) {
+  canvases.canvas.object.on('mousemove mouseleave', function (e) {
+    if(!canvases.canvas.drawing) {
       return;
     }
     // 描画
@@ -182,20 +228,18 @@ $(function () {
   });
 
   // キャンバス上でのクリック
-  canvas.on('mousedown', function (e) {
-    drawing = true;
+  canvases.canvas.object.on('mousedown', function (e) {
     mouse.reset(e);
     history.draw();
+    canvases.canvas.draw();
     draw(e);
   });
 
   // クリックが終わった判定はdocumentで取る
   $(document).on('mouseup', function () {
-    drawing = false;
-
     var id = current_layer.data('layer-id');
-
     preview(id);
+    canvases.canvas.drawed();
   });
 
   // ペン色選択コンポーネント
@@ -303,32 +347,6 @@ $(function () {
   }
 
   /**
-   * キャンバスを一段階縮小する
-   */
-  function minusScale() {
-    scaling(canvas_scale - 0.2);
-  }
-
-  /**
-   * キャンバスを一段階拡大する
-   */
-  function plusScale() {
-    scaling(canvas_scale + 0.2);
-  }
-
-  /**
-   * キャンバスの拡大縮小
-   * 
-   * @param {*} scale 
-   */
-  function scaling(scale = null) {
-    if (scale) {
-      canvas_scale = scale;
-    }
-    $('#canvases').css('transform', 'scale(' + scale + ', ' + scale + ')');
-  }
-
-  /**
    * 新規レイヤーの追加
    */
   function addLayer() {
@@ -359,10 +377,7 @@ $(function () {
    * @param {*} id 
    */
   function createLayerCanvas(id) {
-    var width = getCanvasWidth();
-    var height = getCanvasHeight();
-
-    return '<canvas class="layer" id="layer-' + id + '" width="' + width + '" height="' + height + '" data-layer-id="' + id + '"></canvas>';
+    return '<canvas class="layer" id="layer-' + id + '" width="' + canvases.canvas.size.width + '" height="' + canvases.canvas.size.height + '" data-layer-id="' + id + '"></canvas>';
   }
 
   /**
@@ -379,20 +394,6 @@ $(function () {
   }
 
   /**
-   * キャンバスの横幅を返す
-   */
-  function getCanvasWidth() {
-    return $('#layer-0').get(0).width;
-  }
-
-  /**
-   * キャンバスの高さを返す
-   */
-  function getCanvasHeight() {
-    return $('#layer-0').get(0).height;
-  }
-
-  /**
    * 描画
    * 
    * @param {*} e 
@@ -401,8 +402,8 @@ $(function () {
     mouse.draw(e);
     
     layer_context.beginPath();
-    layer_context.moveTo(mouse.begin_x - canvas_padding.x, mouse.begin_y - canvas_padding.y);
-    layer_context.lineTo(mouse.end_x - canvas_padding.x, mouse.end_y - canvas_padding.y);
+    layer_context.moveTo(mouse.begin_x - canvases.canvas.padding.x, mouse.begin_y - canvases.canvas.padding.y);
+    layer_context.lineTo(mouse.end_x - canvases.canvas.padding.x, mouse.end_y - canvases.canvas.padding.y);
     layer_context.stroke();
     layer_context.closePath();
 
@@ -414,30 +415,9 @@ $(function () {
    */
   function initialize() {
     addLayer();
-    changeCanvasSize();
+    canvases.canvas.changeSize();
     pen.change();
     scrollCenter($('#canvases-scrollable'));
-  }
-
-  /**
-   * キャンバスサイズを変更
-   * 
-   * @param {int} width 
-   * @param {int} height 
-   */
-  function changeCanvasSize(width = 1000, height = 800) {
-    $('.layer').each(function () {
-      $(this).get(0).width = width;
-      $(this).get(0).height = height;
-    });
-
-    $('#preview-canvas').get(0).width = width;
-    $('#preview-canvas').get(0).height = height;
-
-    // 左右に500pxのpadding
-    canvas.get(0).width = width + 1000;
-    // 上下に300pxのpadding
-    canvas.get(0).height = height + 600;
   }
   
   /**
