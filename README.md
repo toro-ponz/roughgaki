@@ -1,8 +1,11 @@
 # らふがき by toro_ponz
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
+![](images/top.png)
+
 ## 概要
-らふがき by toro_ponzはブラウザ上で実行できるお絵描きWebアプリケーションです。
+らふがき by toro_ponzはブラウザ上で実行できるお絵描きWebアプリケーションです。  
+[デモ](https://toro-ponz.github.io/roughgaki/draw/)
 
 ## 特徴
 * 制限のないレイヤー
