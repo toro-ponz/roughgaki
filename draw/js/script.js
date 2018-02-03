@@ -97,7 +97,7 @@ $(function () {
       if (pop.length < 1) {
         return;
       }
-  
+
       var item = pop.pop();
       var layer = $('#' + item.id);
 
@@ -113,7 +113,19 @@ $(function () {
       img.src = data;
       img.onload = function () {
         clearCanvas(layer);
-        layer.get(0).getContext('2d').drawImage(img, 0, 0);
+
+        var context = layer.get(0).getContext('2d');
+
+        // 一時的にペンモードを描画に変える
+        var pen_mode = context.globalCompositeOperation;
+        context.globalCompositeOperation = 'source-over';
+        
+        // レイヤーのリストア
+        context.drawImage(img, 0, 0);
+
+        // 描画後にモードを戻す
+        context.globalCompositeOperation = pen_mode;
+
         preview(layer.data('layer-id'), layer);
       };
     },
