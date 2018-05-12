@@ -11,163 +11,35 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container-fluid" id="roughgaki">
     <div class="header"></div>
 
     <div class="content row">
       <div class="col-lg-2 col">
-        <div class="left-menu scrollable-y">
+        <div class="left-menu scrollable-y pen-vue">
           <h1>らふがき<small>by toro_ponz</small></h1>
-          <div class="pen-color-menu">
-            <h5>ペン色</h5>
-            <div class="pen-colorpicker">
-              <input type="text" id="color-picker">
-            </div>
-          </div>
-          <div class="pen-mode-menu">
-            <h5>ペンモード</h5>
-            <div class="row">
-              <div class="col-lg-4 col">
-                <button class="pen-mode-button active-pen-mode" id="pen-mode-pen" type="button" value="pen">
-                  <span>ペン</span>
-                </button>
-              </div>
-              <div class="col-lg-4 col">
-                <button class="pen-mode-button" id="pen-mode-eraser" type="button" value="eraser">
-                  <span>消しゴム</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="pen-nib-menu">
-            <h5>ペン先</h5>
-            <div class="row">
-              <div class="col-lg-4 col">
-                <button class="pen-nib-button active-pen-nib" type="button" value="round">
-                  <span>丸</span>
-                </button>
-              </div>
-              <div class="col-lg-4 col">
-                <button class="pen-nib-button" type="button" value="square">
-                  <span>四角</span>
-                </button>
-              </div>
-              <div class="col-lg-4 col">
-                <button class="pen-nib-button" type="button" value="butt">
-                  <span>棒</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="pen-size-menu">
-            <h5>ペンサイズ</h5>
-            <div class="row">
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="1">1</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="2">2</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="3">3</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="4">4</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button active-pen-size" type="button" value="5">5</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="6">6</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="7">7</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="8">8</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="9">9</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="10">10</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="15">15</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="20">20</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="25">25</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="30">30</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="40">40</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="50">50</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="75">75</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="100">100</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="200">200</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="300">300</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="400">400</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="500">500</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="750">750</button>
-              </div>
-              <div class="col-lg-3 col">
-                <button class="pen-size-button" type="button" value="1000">1000</button>
-              </div>
-            </div>
+          <pen-settings></pen-settings>
+          <div class="history-buttons">
+            <button id="undo-button">
+              <img src="icon/undo.svg" alt="元に戻す">
+            </button>
+            <button id="redo-button">
+              <img src="icon/redo.svg" alt="やり直し">
+            </button>
           </div>
           <p class="copyright">&copy; 2017 とろゝ(<a href="https://twitter.com/toro_ponz" target="_blank">@toro_ponz</a>)</p>
         </div>
       </div>
       <div class="col-lg-8 col">
         <div id="canvases-scrollable">
-          <div id="canvases">
-            <div class="absolute center-absolute" id="layer-canvases">
-              <canvas class="layer" id="layer-0"></canvas>
-            </div>
-            <canvas class="absolute" id="canvas"></canvas>
-            <div class="buttons">
-              <button id="undo-button">
-                <img src="icon/undo.svg" alt="元に戻す">
-              </button>
-              <button id="redo-button">
-                <img src="icon/redo.svg" alt="やり直し">
-              </button>
-            </div>
-          </div>
+          <layers-canvas :layers="layers"></layers-canvas>
         </div>
       </div>
       <div class="col-lg-2 col">
         <div class="right-menu">
           <div class="layer-menu">
             <div class="scrollable-y">
-              <div>
-                <h5>レイヤー</h5>
-              </div>
-              <div>
-                <button id="add-layer-button" type="button">+</button>
-              </div>
-              <div id="layer-buttons"></div>
+              <layers-settings></layers-settings>
             </div>
           </div>
           <div class="preview-area">
@@ -199,6 +71,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/i18n/jquery.spectrum-ja.min.js"></script>
-  <script src="js/script.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <!--<script src="js/script.js"></script>-->
+  <script src="js/vue.js"></script>
 </body>
 </html>
