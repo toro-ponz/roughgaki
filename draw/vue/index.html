@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width user-scalable=no">
+
+  <title>らふがき by toro_ponz</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container-fluid" id="roughgaki">
+    <div class="content row">
+      <div class="col-lg-2 col">
+        <div class="left-menu scrollable-y pen-vue">
+          <h1>らふがき<small>by toro_ponz</small></h1>
+          <pen-settings
+            @change-pen="changePen"
+            :pen="pen">
+          </pen-settings>
+          <layer-history :history="history"></layer-history>
+          <p class="copyright">&copy; 2017 とろゝ(<a href="https://twitter.com/toro_ponz" target="_blank">@toro_ponz</a>)</p>
+        </div>
+      </div>
+      <div class="col-lg-8 col">
+        <div id="canvases-scrollable">
+          <layers-canvas
+            :layers="layers"
+            :pen="pen"
+            :width="width"
+            :height="height"
+            :prop-current-layer="currentLayer">
+          </layers-canvas>
+        </div>
+      </div>
+      <div class="col-lg-2 col">
+        <div class="right-menu">
+          <div class="layer-menu">
+            <div class="scrollable-y">
+              <layers-settings
+                @switch-layer="switchLayer"
+                :layers="layers"
+                :prop-current-layer="currentLayer">
+              </layers-settings>
+            </div>
+          </div>
+          <div class="preview-area">
+            <div class="scrollable-y">
+              <div>
+                <h5>プレビュー</h5>
+              </div>
+              <canvas id="preview-canvas"></canvas>
+            </div>
+          </div>
+          <div class="share-area">
+            <div class="scrollable-y">
+              <h5>シェア</h5>
+              <div>
+                <textarea name="text" id="share-text" spellcheck="false">「らふがき by toro_ponz」でお絵かきしました！&#13;https://toro-ponz.github.io/roughgaki&#13;#roughgaki_by_toro_ponz</textarea>
+              </div>
+              <button type="button" id="save-button">保存</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="js/pen-settings.js"></script>
+  <script src="js/layer-canvas.js"></script>
+  <script src="js/layer-settings.js"></script>
+  <script src="js/application.js"></script>
+</body>
+</html>
